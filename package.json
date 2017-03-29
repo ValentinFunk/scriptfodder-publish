@@ -1,0 +1,17 @@
+{
+  "name": "scriptfodder-publish",
+  "version": "0.0.0-development",
+  "main": "index.js",
+  "author": "Valentin Funk <funk.valentin@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kamshak/scriptfodder-publish.git"
+  },
+  "devDependencies": {
+    "semantic-release": "^6.3.2"
+  }
+}
