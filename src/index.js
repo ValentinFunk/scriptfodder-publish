@@ -44,7 +44,7 @@ function zipArchive (glob) {
 }
 
 const ownPkg = require('../package.json')
-module.exports = async function (argv) {
+module.exports = async function (argv, process) {
   const parsedArgs = nopt(knownOptions, shortHands, argv)
   let options = _.defaults(_.mapKeys(parsedArgs, function (value, key) {
     return _.camelCase(key)

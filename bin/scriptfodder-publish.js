@@ -1,1 +1,1 @@
-require('../src')(process.argv)
+require('../src')(process.argv, process)

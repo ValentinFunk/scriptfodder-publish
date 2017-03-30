@@ -9,11 +9,6 @@ const request = require('request-promise').defaults({
 class ScriptFodder {
   constructor (apiKey) {
     this.apiKey = apiKey
-    this.request = request.defaults({
-      qs: {
-        'api_key': this.apiKey
-      }
-    })
   }
 
   uploadVersion ({
