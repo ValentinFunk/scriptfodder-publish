@@ -4,7 +4,9 @@ const nopt = require('nopt')
 const _ = require('lodash')
 const archiver = require('archiver')
 const fs = require('fs')
+const stream = require('stream')
 log.heading = 'scriptfodder-publish'
+const humanize = require('humanize')
 
 const knownOptions = {
   'api-key': String,
@@ -19,16 +21,39 @@ const shortHands = {
   h: ['--help']
 }
 
+function zipArchive(glob) {
+  return new Promise((resolve, reject) => {
+    var archive = archiver('zip')
+
+    var bufs = [];
+    archive.on('data', function (d) { bufs.push(d);});
+
+    archive.on('end', function () {
+      var buf = Buffer.concat(bufs);
+      resolve({
+        data: buf,
+        fileSize: archive.pointer()
+      });
+    })
+
+    archive.on('error', function(e) {
+      reject(e)
+    })
+
+    archive.glob(glob).finalize()
+  });
+}
+
 const ownPkg = require('../package.json')
-module.exports = function (argv) {
+module.exports = async function (argv) {
   const parsedArgs = nopt(knownOptions, shortHands, argv)
   let options = _.defaults(_.mapKeys(parsedArgs, function (value, key) {
     return _.camelCase(key)
   }), {
-    apiKey: process.env.SF_APIKEY,
-    scriptId: process.env.SF_SCRIPTID,
-    glob: '**'
-  })
+      apiKey: process.env.SF_APIKEY,
+      scriptId: process.env.SF_SCRIPTID,
+      glob: '**'
+    })
 
   if (options.version) {
     console.log(ownPkg.version || 'development')
@@ -75,12 +100,7 @@ Options:
     options.glob = options.argv.remain[0]
   }
 
-  var archive = archiver('zip', {
-    zlib: { level: 9 } // Sets the compression level.
-  })
-  archive.glob(options.glob)
-
-  let changes = ''
+  let changes = '*No changes given.*'
   if (options.changesFile) {
     try {
       changes = fs.readFileSync(options.changesFile)
@@ -89,12 +109,20 @@ Options:
     }
   }
 
-  const client = new ScriptFodder(options.apiKey)
-  client.uploadVersion({
-    scriptId: options.scriptId,
-    versionName: options.versionName,
-    changes
-  })
+  const { data, fileSize } = await zipArchive(options.glob);
+  log.info('Upload', `Uploading new version: ${humanize.filesize(fileSize)}`)
 
-  archive.finalize()
+  const client = new ScriptFodder(options.apiKey)
+  try {
+    const result = await client.uploadVersion({
+      scriptId: options.scriptId,
+      versionName: options.versionName,
+      changes,
+      file: data
+    })
+    log.info("Upload", `Upload finished. Status: ${result.status}`)
+  } catch(e) {
+    log.error('Upload', e.message)
+    log.verbose(e)
+  }
 }
