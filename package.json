@@ -6,26 +6,42 @@
   "bin": {
     "scriptfodder-publish": "bin/scriptfodder-publish.js"
   },
+  "babel": {
+    "presets": [
+      "es2015-node4"
+    ],
+    "plugins": [
+      "transform-async-to-generator"
+    ]
+  },
   "license": "MIT",
   "scripts": {
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "pretest": "standard",
-    "test": "jest"
+    "test": "jest",
+    "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Kamshak/scriptfodder-publish.git"
   },
   "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-es2015-node4": "^2.1.1",
     "child-process-promise": "^2.2.1",
     "jest": "^19.0.2",
     "jest-matchers": "^19.0.0",
+    "mkdirp": "^0.5.1",
     "request-promise": "^4.2.0",
+    "rimraf": "^2.6.1",
     "semantic-release": "^6.3.2",
     "standard": "^9.0.0"
   },
   "dependencies": {
     "archiver": "^1.3.0",
+    "babel-cli": "^6.24.0",
+    "babel-register": "^6.24.0",
     "bluebird": "^3.5.0",
     "humanize": "^0.0.9",
     "lodash": "^4.17.4",
