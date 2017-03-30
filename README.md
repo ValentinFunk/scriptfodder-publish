@@ -8,7 +8,13 @@ Package to publish new versions of addons to ScriptFodder
 
 ## Usage 
 
-CLI:
+Upload zip of current folder as new version, using CHANGELOG as changelog:
+``scriptfodder-publish --script-id=123 --api-key=asdfasdf --version-name=2.0.0 --changes=CHANGELOG``
+
+Upload zip of dist folder as new version, using CHANGELOG as changelog:
+``scriptfodder-publish --script-id=123 --api-key=asdfasdf --version-name=2.0.0 --changes=CHANGELOG --relative-to=dist``
+
+**Full CLI usage**:
 ```
 scriptfodder-publish
 Uploads a new version to an existing scriptfodder script.
@@ -25,11 +31,26 @@ Options:
   --script-id=<Number>    Scriptfodder Script ID
   --version-name=<String> Name of the new version
   --changes-file=<String> Path of the file containing the changelog
+  --relative-to           Add files to zip relative to this folder.
+                          e.g. scriptfodder-publish --relative-to=dist
+                          will add all files in dist under / in the zip archive    
 ```
+
+**Environment variables**
 
 Api Key and Script Id can be configured via environment variables as well:
 - SF_APIKEY
 - SF_SCRIPTID
+
+**.gmodignore**
+
+To prevent certain files from being included in the zip create a .gmodignore file in the folder that is zipped up.
+Each line is a glob pattern (you can use wildcards).
+Example:
+```
+package.json
+**/*.dll
+```
 
 ## License
 The MIT License
