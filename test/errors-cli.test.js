@@ -57,7 +57,6 @@ describe('CLI with environment variables', () => {
     }).then(expectNoSuccess('should error'))
       .catch(({ stderr, code }) => {
         expect(code).not.toBe(0)
-        expect(stderr).toEqual(containsMissingError)
         expect(request).not.toHaveBeenCalled()
       })
   })
@@ -67,8 +66,6 @@ describe('CLI with environment variables', () => {
       SF_SCRIPTID: scriptIds.SCRIPT_ID_SUCCESS
     }).then(expectNoSuccess('should error'), ({ stderr, code }) => {
       expect(code).not.toBe(0)
-      console.error(stderr)
-      expect(stderr).toEqual(containsMissingError)
       expect(request).not.toHaveBeenCalled()
     })
   })
@@ -78,7 +75,6 @@ describe('CLI with environment variables', () => {
       SF_APIKEY: 'asdfsdf'
     }).then(expectNoSuccess('should error'), ({ stderr, code }) => {
       expect(code).not.toBe(0)
-      expect(stderr).toEqual(containsMissingError)
       expect(request).not.toHaveBeenCalled()
     })
   })
