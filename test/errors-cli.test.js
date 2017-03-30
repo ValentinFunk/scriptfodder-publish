@@ -76,6 +76,7 @@ describe('CLI with environment variables', () => {
       }
     }).then(expectNoSuccess('should error'), ({ stderr, code }) => {
       expect(code).not.toBe(0)
+      console.error(stderr)
       expect(stderr).toEqual(containsMissingError)
       expect(request).not.toHaveBeenCalled()
     })
