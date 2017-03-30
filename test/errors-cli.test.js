@@ -6,7 +6,6 @@ jest.mock('request-promise')
  * This means that no mocks are available.
  */
 
-const resetEnvironmentVariables = require('./helpers/environment').resetEnvironmentVariables
 const runCli = require('./helpers/cli').realCli
 
 const containsMissingError = expect.stringContaining('ERR! Missing')
@@ -20,8 +19,6 @@ const expectNoSuccess = function (msg) {
 }
 
 describe('CLI Only', () => {
-  beforeEach(resetEnvironmentVariables)
-
   const request = require('request-promise')
   beforeEach(() => {
     request.mockClear()
@@ -48,8 +45,6 @@ describe('CLI Only', () => {
 })
 
 describe('CLI with environment variables', () => {
-  beforeEach(resetEnvironmentVariables)
-
   const request = require('request-promise')
   beforeEach(() => {
     request.mockClear()
@@ -57,10 +52,8 @@ describe('CLI with environment variables', () => {
 
   it('fails if version is missing (given SF_APIKEY and SF_SCRIPTID)', () => {
     return runCli([], {
-      env: {
-        SF_APIKEY: 'asdff',
-        SF_SCRIPTID: scriptIds.SCRIPT_ID_SUCCESS
-      }
+      SF_APIKEY: 'asdff',
+      SF_SCRIPTID: scriptIds.SCRIPT_ID_SUCCESS
     }).then(expectNoSuccess('should error'))
       .catch(({ stderr, code }) => {
         expect(code).not.toBe(0)
@@ -71,9 +64,7 @@ describe('CLI with environment variables', () => {
 
   it('fails if api key is missing (given SF_SCRIPTID, --version-name)', () => {
     return runCli(['--version-name=2.0.0'], {
-      env: {
-        SF_SCRIPTID: scriptIds.SCRIPT_ID_SUCCESS
-      }
+      SF_SCRIPTID: scriptIds.SCRIPT_ID_SUCCESS
     }).then(expectNoSuccess('should error'), ({ stderr, code }) => {
       expect(code).not.toBe(0)
       console.error(stderr)
@@ -84,9 +75,7 @@ describe('CLI with environment variables', () => {
 
   it('fails if script id is missing (given SF_APIKEY, --version-name)', () => {
     return runCli(['--version-name=2.0.0'], {
-      env: {
-        SF_APIKEY: 'asdfsdf'
-      }
+      SF_APIKEY: 'asdfsdf'
     }).then(expectNoSuccess('should error'), ({ stderr, code }) => {
       expect(code).not.toBe(0)
       expect(stderr).toEqual(containsMissingError)
