@@ -9,9 +9,11 @@ Package to publish new versions of addons to ScriptFodder
 ## Usage 
 
 Upload zip of current folder as new version, using CHANGELOG as changelog:
+
 ``scriptfodder-publish --script-id=123 --api-key=asdfasdf --version-name=2.0.0 --changes=CHANGELOG``
 
 Upload zip of dist folder as new version, using CHANGELOG as changelog:
+
 ``scriptfodder-publish --script-id=123 --api-key=asdfasdf --version-name=2.0.0 --changes=CHANGELOG --relative-to=dist``
 
 **Full CLI usage**:
