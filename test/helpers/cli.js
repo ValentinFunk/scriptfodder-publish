@@ -5,7 +5,7 @@ const childProcess = require('child-process-promise')
 exports.realCli = function (args, options) {
   return childProcess.spawn('node', ['bin/scriptfodder-publish.js', ...args], Object.assign({
     capture: [ 'stdout', 'stderr' ]
-  }, options))
+  }, options)).then(o => console.log(o) || o)
 }
 
 class ProcessExitError {
