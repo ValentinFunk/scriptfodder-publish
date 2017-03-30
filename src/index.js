@@ -4,7 +4,6 @@ const nopt = require('nopt')
 const _ = require('lodash')
 const archiver = require('archiver')
 const fs = require('fs')
-const stream = require('stream')
 log.heading = 'scriptfodder-publish'
 const humanize = require('humanize')
 
@@ -21,27 +20,27 @@ const shortHands = {
   h: ['--help']
 }
 
-function zipArchive(glob) {
+function zipArchive (glob) {
   return new Promise((resolve, reject) => {
     var archive = archiver('zip')
 
-    var bufs = [];
-    archive.on('data', function (d) { bufs.push(d);});
+    var bufs = []
+    archive.on('data', function (d) { bufs.push(d) })
 
     archive.on('end', function () {
-      var buf = Buffer.concat(bufs);
+      var buf = Buffer.concat(bufs)
       resolve({
         data: buf,
         fileSize: archive.pointer()
-      });
+      })
     })
 
-    archive.on('error', function(e) {
+    archive.on('error', function (e) {
       reject(e)
     })
 
     archive.glob(glob).finalize()
-  });
+  })
 }
 
 const ownPkg = require('../package.json')
@@ -50,10 +49,10 @@ module.exports = async function (argv) {
   let options = _.defaults(_.mapKeys(parsedArgs, function (value, key) {
     return _.camelCase(key)
   }), {
-      apiKey: process.env.SF_APIKEY,
-      scriptId: process.env.SF_SCRIPTID,
-      glob: '**'
-    })
+    apiKey: process.env.SF_APIKEY,
+    scriptId: process.env.SF_SCRIPTID,
+    glob: '**'
+  })
 
   if (options.version) {
     console.log(ownPkg.version || 'development')
@@ -109,7 +108,7 @@ Options:
     }
   }
 
-  const { data, fileSize } = await zipArchive(options.glob);
+  const { data, fileSize } = await zipArchive(options.glob)
   log.info('Upload', `Uploading new version: ${humanize.filesize(fileSize)}`)
 
   const client = new ScriptFodder(options.apiKey)
@@ -120,8 +119,8 @@ Options:
       changes,
       file: data
     })
-    log.info("Upload", `Upload finished. Status: ${result.status}`)
-  } catch(e) {
+    log.info('Upload', `Upload finished. Status: ${result.status}`)
+  } catch (e) {
     log.error('Upload', e.message)
     log.verbose(e)
   }

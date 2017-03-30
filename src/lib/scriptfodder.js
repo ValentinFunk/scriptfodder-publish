@@ -29,9 +29,9 @@ class ScriptFodder {
         file: {
           value: file,
           options: {
-            filename: versionName + ".zip",
+            filename: versionName + '.zip',
             contentType: 'application/zip'
-          },
+          }
         },
         name: versionName,
         changes
@@ -39,8 +39,8 @@ class ScriptFodder {
     }
 
     return request(opts).then(response => {
-      if (response.status == 'error') {
-        throw new Error("API Response: " + response.description);
+      if (response.status === 'error') {
+        throw new Error('API Response: ' + response.description)
       }
       return response
     })
