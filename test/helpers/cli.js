@@ -22,5 +22,5 @@ exports.requireCli = function (args, env = {}) {
     exit: code => { throw new ProcessExitError(code) },
     env
   }
-  return require.requireActual('../../dist/index')(argv, process)
+  return require.requireActual('../../src/index')(argv, process)
 }

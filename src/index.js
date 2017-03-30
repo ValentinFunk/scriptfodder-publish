@@ -6,13 +6,15 @@ const archiver = require('archiver')
 const fs = require('fs')
 log.heading = 'scriptfodder-publish'
 const humanize = require('humanize')
+const path = require('path')
 
 const knownOptions = {
   'api-key': String,
   version: Boolean,
   help: Boolean,
   'script-id': Number,
-  'version-name': String
+  'version-name': String,
+  'relative-to': String
 }
 
 const shortHands = {
@@ -20,7 +22,7 @@ const shortHands = {
   h: ['--help']
 }
 
-function zipArchive (glob) {
+function zipArchive (glob, globOptions) {
   return new Promise((resolve, reject) => {
     var archive = archiver('zip')
 
@@ -39,7 +41,7 @@ function zipArchive (glob) {
       reject(e)
     })
 
-    archive.glob(glob).finalize()
+    archive.glob(glob, globOptions).finalize()
   })
 }
 
@@ -76,6 +78,9 @@ Options:
   --script-id=<Number>    Scriptfodder Script ID
   --version-name=<String> Name of the new version
   --changes-file=<String> Path of the file containing the changelog
+  --relative-to           Add files to zip relative to this folder.
+                          e.g. scriptfodder-publish --relative-to=dist
+                          will add all files in dist under / in the zip archive                
 `)
     process.exit(0)
   }
@@ -108,7 +113,17 @@ Options:
     }
   }
 
-  const { data, fileSize } = await zipArchive(options.glob)
+  const globOptions = {}
+  if (options.relativeTo) {
+    globOptions.cwd = path.resolve(options.relativeTo)
+  }
+
+  const gmodIgnorePath = path.resolve(globOptions.cwd || '.', '.gmodignore')
+  if (fs.existsSync(gmodIgnorePath)) {
+    globOptions.ignore = fs.readFileSync(gmodIgnorePath, 'utf-8').split(/[\r\n]+/).filter(Boolean)
+  }
+
+  const { data, fileSize } = await zipArchive(options.glob, globOptions)
   log.info('Upload', `Uploading new version: ${humanize.filesize(fileSize)}`)
 
   const client = new ScriptFodder(options.apiKey)
