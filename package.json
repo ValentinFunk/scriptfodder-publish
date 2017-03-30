@@ -44,6 +44,7 @@
     "babel-cli": "^6.24.0",
     "babel-register": "^6.24.0",
     "bluebird": "^3.5.0",
+    "dotenv": "^4.0.0",
     "humanize": "^0.0.9",
     "lodash": "^4.17.4",
     "nopt": "^4.0.1",

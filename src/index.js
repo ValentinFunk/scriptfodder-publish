@@ -8,6 +8,8 @@ log.heading = 'scriptfodder-publish'
 const humanize = require('humanize')
 const path = require('path')
 
+require('dotenv').config()
+
 const knownOptions = {
   'api-key': String,
   version: Boolean,
