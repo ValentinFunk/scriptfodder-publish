@@ -119,7 +119,7 @@ Options:
       const version = JSON.parse(fs.readFileSync('package.json')).version
       const filename = `CHANGELOG_${version}.tmp.md`
       changes = fs.readFileSync(filename)
-    } catch(e) {
+    } catch (e) {
       log.verbose('Could not read file: ', e)
     }
   }
