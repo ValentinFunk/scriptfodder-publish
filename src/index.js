@@ -106,12 +106,21 @@ Options:
     options.glob = options.argv.remain[0]
   }
 
-  let changes = '*No changes given.*'
+  let changes = '*No changelog.*'
   if (options.changesFile) {
     try {
       changes = fs.readFileSync(options.changesFile)
     } catch (e) {
       log.error('Could not load file ' + options.changesFile, e)
+    }
+  } else {
+    log.verbose('No changelog file given, trying CHANGELOG_<version>.tmp.md')
+    try {
+      const version = JSON.parse(fs.readFileSync('package.json')).version
+      const filename = `CHANGELOG_${version}.tmp.md`
+      changes = fs.readFileSync(filename)
+    } catch(e) {
+      log.verbose('Could not read file: ', e)
     }
   }
 
