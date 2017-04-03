@@ -68,6 +68,25 @@ describe('uploading a new version', () => {
       }, expectNoFailure('Failed'))
   })
 
+  it('reads the version from package.json with --version-from-package', () => {
+    const args = [
+      `--script-id=${scriptIds.SCRIPT_ID_SUCCESS}`,
+      `--version-from-package`,
+      `--api-key=${API_KEY}`,
+      '*'
+    ]
+
+    return cli(args)
+      .then(result => {
+        expect(request).toHaveBeenCalledWithObject({
+          formData: {
+            name: JSON.parse(fs.readFileSync('package.json')).version
+
+          }
+        })
+      }, expectNoFailure('Failed'))
+  })
+
   it('reads the changelog correctly and uploads it', () => {
     const changesFile = 'test/fixtures/changelog_test.md'
     const args = [

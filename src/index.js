@@ -16,7 +16,8 @@ const knownOptions = {
   help: Boolean,
   'script-id': Number,
   'version-name': String,
-  'relative-to': String
+  'relative-to': String,
+  'version-from-package': Boolean
 }
 
 const shortHands = {
@@ -79,6 +80,8 @@ Options:
   --api-key=<String>      Scriptfodder API Key
   --script-id=<Number>    Scriptfodder Script ID
   --version-name=<String> Name of the new version
+   OR
+  --version-from-package  Get version name from package.json in CWD
   --changes-file=<String> Path of the file containing the changelog
   --relative-to           Add files to zip relative to this folder.
                           e.g. scriptfodder-publish --relative-to=dist
@@ -92,7 +95,18 @@ Options:
     process.exit(1)
   }
 
-  if (!options.versionName) {
+  if (options.versionName && options.versionFromPackage) {
+    log.error('Incompatible options --version-name and --version-from-package')
+    process.exit(1)
+  } else if (options.versionFromPackage) {
+    try {
+      options.versionName = JSON.parse(fs.readFileSync('package.json')).version
+    } catch (e) {
+      log.error('version', 'Could not determine version from package.json: ', e.message)
+      log.verbose(e)
+      process.exit(1)
+    }
+  } else if (!options.versionName) {
     log.error('Missing version name. (--version-name=<String>)')
     process.exit(1)
   }
