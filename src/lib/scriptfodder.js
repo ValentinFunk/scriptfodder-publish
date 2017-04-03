@@ -2,7 +2,7 @@ const request = require('request-promise').defaults({
   headers: {
     'user-agent': 'scriptfodder-publish'
   },
-  baseUrl: 'https://scriptfodder.com',
+  baseUrl: 'https://gmodstore.com',
   json: true
 })
 
