@@ -17,7 +17,8 @@ const knownOptions = {
   'script-id': Number,
   'version-name': String,
   'relative-to': String,
-  'version-from-package': Boolean
+  'version-from-package': Boolean,
+  'zip-only': Boolean
 }
 
 const shortHands = {
@@ -85,7 +86,8 @@ Options:
   --changes-file=<String> Path of the file containing the changelog
   --relative-to           Add files to zip relative to this folder.
                           e.g. scriptfodder-publish --relative-to=dist
-                          will add all files in dist under / in the zip archive                
+                          will add all files in dist under / in the zip archive       
+  --zip-only              Creates a zip file instead of uploading         
 `)
     process.exit(0)
   }
@@ -149,6 +151,13 @@ Options:
   }
 
   const { data, fileSize } = await zipArchive(options.glob, globOptions)
+  if (options.zipOnly) {
+    const filename = 'publish-' + options.versionName + '.zip'
+    fs.writeFileSync(filename, data)
+    log.info('Zip', `Skipping upload, wrote: ${filename}`)
+    return
+  }
+
   log.info('Upload', `Uploading new version: ${humanize.filesize(fileSize)}`)
 
   const client = new ScriptFodder(options.apiKey)
